@@ -170,7 +170,7 @@ minetest.register_globalstep(function(dtime)
                 jitter = { x = speed, y = 0, z = speed },
                 texture = "default_cloud.png",
                 alpha = { 0.2, 0 },
-                size = 0.05,
+                size = 0.1,
                 size_tween = { 0, 0.1, 0 },
             })
         end
