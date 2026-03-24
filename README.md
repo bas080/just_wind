@@ -40,9 +40,6 @@ local density = 2                             -- heavier objects feel less wind
 -- get wind at position and apply to velocity
 local new_vel, wind_vec = wind.get_wind(pos):add(current_vel, density)
 
--- wind_vec is still a Wind object, so you can query magnitude or reuse
-print("Wind speed applied:", vector.length(wind_vec))
-
 object:set_velocity(new_vel)
 ```
 
@@ -69,25 +66,22 @@ minetest.add_particle({
 ```lua
 local wind_vec = wind.get_wind(pos)
 
--- magnitude of wind
+-- magnitude/speed of wind
 local speed = vector.length(wind_vec)
-print("Wind speed:", speed)
 
 -- normalize to get pure direction
-local dir_x, dir_z = (wind_vec.x / speed), (wind_vec.z / speed)
-print("Wind direction:", dir_x, dir_z)
+vector.normalize(wind_vec)
 ```
 
-
-Here’s how you can **update your README** to mention `/wind_toggle` for debugging purposes, keeping it concise and clear for modders:
-
-## Usage / Debugging
+## Debugging
 
 You can toggle the wind particle effects on and off in-game using the chat command:
 
 ```text
 /wind_toggle
 ```
+
+Useful when integrating wind into your mod.
 
 ## Donate
 
