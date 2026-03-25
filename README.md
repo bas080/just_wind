@@ -7,8 +7,9 @@ local wind = dofile(core.get_modpath('breasy')..'/init.lua')
 
 wind.get_wind(pos)
 
-wind.register_biome({
-  factor = 0.1 -- 0 till 1+
+wind.register_biome('<biome_name>', {
+  -- Does a multiply
+  factor = 0.5 -- cut the wind in half
 })
 ```
 
