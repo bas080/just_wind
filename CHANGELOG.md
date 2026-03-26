@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.1
+
+- Fix biome register example.
+- Increase wind particle size.
+- Improve docs slightly.
+- Update to better screenshot.
+
 ## 0.0.0
 
 * Provides a **location-based wind system** with direction and speed.
