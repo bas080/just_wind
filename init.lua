@@ -93,7 +93,9 @@ function Wind:add(vel, density)
     density = math.max(density, 0.01) -- prevent divide by zero
 
     -- scale by inverse density
-    local force = vector.multiply(wind, 1 / density)
+    local wind_mag = vector.length(wind)
+    local scale = (wind_mag ^ 2) / density  -- stronger winds grow exponentially
+    local force = vector.multiply(wind, scale)
 
     return vector.add(vel, force), wind
 end
