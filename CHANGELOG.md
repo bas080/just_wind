@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.2
+
+- Add some default biome defs.
+- Reduce velocity added when already moving with wind.
+- Make force applied by wind increase exponentially with wind speed.
+- Persist particle toggle to settings.
+
 ## 0.0.1
 
 - Fix biome register example.
