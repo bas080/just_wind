@@ -1,7 +1,9 @@
 local wind = {}
 
-local modname = core.get_current_modname()
+local modname = 'breasy'
 local setting_prefix = modname .. "_"
+
+local biomes = dofile(modname..'/biomes.lua')
 
 wind_particles_setting = setting_prefix .. "wind_particles"
 
@@ -18,6 +20,11 @@ local biome_factors = {}
 
 function wind.register_biome(name, def)
     biome_factors[name] = def.factor or 1.0
+end
+
+-- Register factors for some biomes.
+for biome, def in pairs(biomes) do
+    wind.register_biome(biome, def)
 end
 
 -- noise setup (reuse, do NOT recreate per call)
