@@ -1,5 +1,12 @@
 local wind = {}
 
+local modname = core.get_current_modname()
+local setting_prefix = modname .. "_"
+
+wind_particles_setting = setting_prefix .. "wind_particles"
+
+local wind_enabled = core.settings:get_bool(wind_particles_setting, false)
+
 -- constants
 local SCALE = 200
 local TIME_SCALE = 95
@@ -132,13 +139,14 @@ local function rand_offset(r)
     return (math.random() * 2 - 1) * r
 end
 
-local wind_enabled = false
 
 minetest.register_chatcommand("wind_toggle", {
     params = "",
     description = "Toggle wind particle effects on/off",
     func = function(name)
         wind_enabled = not wind_enabled
+        core.settings:set_bool(wind_particles_setting, wind_enabled)
+        core.settings:write()
         return true, "Wind particles are now " .. (wind_enabled and "ON" or "OFF")
     end,
 })
