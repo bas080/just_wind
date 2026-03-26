@@ -54,6 +54,9 @@ local wind_vec = wind.get_wind(pos)
 local base_vel = { x = 0, y = 0, z = 0 }
 local particle_vel, applied_wind = wind_vec:add(base_vel, 1)
 
+-- or use steer to make it move with the wind.
+local particle_vel, applied_wind = wind_vec:steer(base_vel, 1)
+
 minetest.add_particle({
     pos = pos,
     velocity = particle_vel,

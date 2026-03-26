@@ -3,7 +3,7 @@ local wind = {}
 local modname = core.get_modpath("breasy")
 local setting_prefix = modname .. "_"
 
-local biomes = dofile(modname..'/biomes.lua')
+local biomes = dofile(modname .. "/biomes.lua")
 
 wind_particles_setting = setting_prefix .. "wind_particles"
 
@@ -94,6 +94,24 @@ end
 local Wind = {}
 Wind.__index = Wind
 
+function Wind:steer(acc, factor)
+    local wind_vec = self
+    -- wind_vec: vector {x,y,z} from wind
+    -- acc: vector {x,y,z} particle acceleration
+    -- factor: 0..1, strength of wind influence
+
+    factor = factor or 0.5
+    acc = acc or { x = 0, y = 0, z = 0 }
+
+    local wind_dir = vector.length(wind_vec) > 0 and vector.normalize(wind_vec) or { x = 0, y = 0, z = 0 }
+    local acc_dir = vector.length(acc) > 0 and vector.normalize(acc) or { x = 0, y = 0, z = 0 }
+
+    local new_dir =
+        vector.normalize(vector.add(vector.multiply(acc_dir, 1 - factor), vector.multiply(wind_dir, factor)))
+
+    return vector.multiply(new_dir, vector.length(acc))
+end
+
 function Wind:add(vel, factor)
     local wind = self
     factor = factor or 1
@@ -111,7 +129,7 @@ function Wind:add(vel, factor)
 
     -- scale decreases as object speed along wind increases
     local scale = (wind_mag ^ 2) * factor
-    local factor = math.max(0, 1 - vel_along_wind / wind_mag)  -- less force if already moving with wind
+    local factor = math.max(0, 1 - vel_along_wind / wind_mag) -- less force if already moving with wind
 
     local force = vector.multiply(wind, scale * factor)
     return vector.add(vel, force), wind
@@ -157,7 +175,6 @@ local PARTICLES_PER_STEP = 3
 local function rand_offset(r)
     return (math.random() * 2 - 1) * r
 end
-
 
 minetest.register_chatcommand("wind_toggle", {
     params = "",
