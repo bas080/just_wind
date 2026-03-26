@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- Have add wind second param act like multiply/factor.
+
 ## 0.0.2
 
 - Add some default biome defs.

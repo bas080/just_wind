@@ -94,10 +94,9 @@ end
 local Wind = {}
 Wind.__index = Wind
 
-function Wind:add(vel, density)
+function Wind:add(vel, factor)
     local wind = self
-    density = density or 1
-    density = math.max(density, 0.01) -- prevent divide by zero
+    factor = factor or 1
 
     local wind_mag = vector.length(wind)
     if wind_mag == 0 then
@@ -111,7 +110,7 @@ function Wind:add(vel, density)
     local vel_along_wind = (vel.x * wind_dir.x + vel.y * wind_dir.y + vel.z * wind_dir.z)
 
     -- scale decreases as object speed along wind increases
-    local scale = (wind_mag ^ 2) / density
+    local scale = (wind_mag ^ 2) * factor
     local factor = math.max(0, 1 - vel_along_wind / wind_mag)  -- less force if already moving with wind
 
     local force = vector.multiply(wind, scale * factor)

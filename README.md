@@ -24,7 +24,7 @@ If adopted it can create a more consistent environment where all particles move 
 * **Perlin noise** introduces minor natural variation for both direction and speed.
 * **Biome influence**: modders can register biome-specific factors (`wind.register_biome`) to scale local wind speed.
 * **Altitude attenuation**: wind weakens below sea level, gradually vanishing toward `MIN_Y`.
-* Offers a **Wind:add()** helper to apply wind force to objects considering their density.
+* Offers a **Wind:add()** helper to apply wind force to objects.
 * Generates **client-side particles** around players to visualize wind flow.
 * Designed for **minimal recalculation**: noise objects are reused and speed/direction are stable per location.
 
@@ -36,10 +36,10 @@ This makes it easy for other mods to query wind vectors at any position and inte
 
 ```lua
 local current_vel = { x = 0, y = 0, z = 0 }  -- current velocity
-local density = 2                             -- heavier objects feel less wind
+local factor = 2                             -- the amount it is affected by wind
 
 -- get wind at position and apply to velocity
-local new_vel, wind_vec = wind.get_wind(pos):add(current_vel, density)
+local new_vel, wind_vec = wind.get_wind(pos):add(current_vel, factor)
 
 object:set_velocity(new_vel)
 ```
