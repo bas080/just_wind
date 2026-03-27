@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Use get_modpath instead of string directly.
+
 ## 1.0.0
 
 - Have add wind second param act like multiply/factor.
