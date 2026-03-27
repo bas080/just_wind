@@ -1,6 +1,6 @@
 local wind = {}
 
-local modname = 'breasy'
+local modname = core.get_modpath("breasy")
 local setting_prefix = modname .. "_"
 
 local biomes = dofile(modname..'/biomes.lua')
