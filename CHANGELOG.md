@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- Fix bug where very small wind values would cause Infinity or NaN.
+
 ## 1.0.1
 
 - Use get_modpath instead of string directly.
