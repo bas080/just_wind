@@ -9,6 +9,9 @@ wind_particles_setting = setting_prefix .. "wind_particles"
 
 local wind_enabled = core.settings:get_bool(wind_particles_setting, false)
 
+-- Prevent dividing by very small number
+local almost_zero = 1e-5
+
 -- constants
 local SCALE = 200
 local TIME_SCALE = 95
@@ -62,15 +65,6 @@ local noise_dir_x = PerlinNoise(np_dir_x)
 local noise_dir_z = PerlinNoise(np_dir_z)
 local noise_speed = PerlinNoise(np_speed)
 
--- helpers
-local function normalize(x, z)
-    local len = math.sqrt(x * x + z * z)
-    if len < 1e-6 then
-        return 1, 0 -- fallback direction
-    end
-    return x / len, z / len
-end
-
 local function get_biome_factor(pos)
     local data = minetest.get_biome_data(pos)
     if not data then
@@ -99,7 +93,7 @@ function Wind:add(vel, factor)
     factor = factor or 1
 
     local wind_mag = vector.length(wind)
-    if wind_mag == 0 then
+    if wind_mag <= almost_zero then
         return vel, wind
     end
 
@@ -127,7 +121,7 @@ function wind.get_wind(pos)
     local dx = noise_dir_x:get_3d({ x = x, y = z, z = t })
     local dz = noise_dir_z:get_3d({ x = x, y = z, z = t })
 
-    local dir_x, dir_z = normalize(dx, dz)
+    local dir = vector.normalize(vector.new(dx, 0, dz))
 
     -- speed
     local s = noise_speed:get_3d({ x = x, y = z, z = t })
@@ -140,11 +134,7 @@ function wind.get_wind(pos)
     -- altitude attenuation
     speed = speed * altitude_factor(pos.y)
 
-    local velocity = {
-        x = dir_x * speed,
-        y = 0,
-        z = dir_z * speed,
-    }
+    local velocity = vector.multiply(dir, speed)
 
     setmetatable(velocity, Wind)
 
