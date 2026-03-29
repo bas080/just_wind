@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+- Likely fixed the wind vector nan source.
+
 ## 2.0.0
 
 - Removed the add function since this is not a physics library.
