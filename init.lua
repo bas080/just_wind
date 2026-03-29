@@ -1,20 +1,21 @@
 local wind = {}
 
+_G.breasy = wind
+
 local modname = core.get_modpath("breasy")
 local setting_prefix = modname .. "_"
 
-local biomes = dofile(modname..'/biomes.lua')
+local global_factor = 10;
+
+local biomes = dofile(modname .. "/biomes.lua")
 
 wind_particles_setting = setting_prefix .. "wind_particles"
 
 local wind_enabled = core.settings:get_bool(wind_particles_setting, false)
 
--- Prevent dividing by very small number
-local almost_zero = 1e-5
-
 -- constants
 local SCALE = 200
-local TIME_SCALE = 95
+local TIME_SCALE = 150
 local SEA_LEVEL = 0
 local MIN_Y = -20
 
@@ -66,12 +67,12 @@ local noise_dir_z = PerlinNoise(np_dir_z)
 local noise_speed = PerlinNoise(np_speed)
 
 local function get_biome_factor(pos)
-    local data = minetest.get_biome_data(pos)
+    local data = core.get_biome_data(pos)
     if not data then
         return 1
     end
 
-    local name = minetest.get_biome_name(data.biome)
+    local name = core.get_biome_name(data.biome)
     return biome_factors[name] or 1
 end
 
@@ -88,34 +89,11 @@ end
 local Wind = {}
 Wind.__index = Wind
 
-function Wind:add(vel, factor)
-    local wind = self
-    factor = factor or 1
-
-    local wind_mag = vector.length(wind)
-    if wind_mag <= almost_zero then
-        return vel, wind
-    end
-
-    -- unit vector of wind
-    local wind_dir = vector.normalize(wind)
-
-    -- velocity along wind direction
-    local vel_along_wind = (vel.x * wind_dir.x + vel.y * wind_dir.y + vel.z * wind_dir.z)
-
-    -- scale decreases as object speed along wind increases
-    local scale = (wind_mag ^ 2) * factor
-    local factor = math.max(0, 1 - vel_along_wind / wind_mag)  -- less force if already moving with wind
-
-    local force = vector.multiply(wind, scale * factor)
-    return vector.add(vel, force), wind
-end
-
 -- main API
 function wind.get_wind(pos)
-    local x = pos.x / SCALE
-    local z = pos.z / SCALE
-    local t = minetest.get_gametime() / TIME_SCALE
+    local x = math.round(pos.x) / SCALE
+    local z = math.round(pos.z) / SCALE
+    local t = core.get_gametime() / TIME_SCALE
 
     -- direction
     local dx = noise_dir_x:get_3d({ x = x, y = z, z = t })
@@ -130,6 +108,8 @@ function wind.get_wind(pos)
 
     -- biome influence
     speed = speed * get_biome_factor(pos)
+
+    speed = speed * global_factor
 
     -- altitude attenuation
     speed = speed * altitude_factor(pos.y)
@@ -148,8 +128,7 @@ local function rand_offset(r)
     return (math.random() * 2 - 1) * r
 end
 
-
-minetest.register_chatcommand("wind_toggle", {
+core.register_chatcommand("wind_toggle", {
     params = "",
     description = "Toggle wind particle effects on/off",
     func = function(name)
@@ -160,12 +139,14 @@ minetest.register_chatcommand("wind_toggle", {
     end,
 })
 
-minetest.register_globalstep(function(dtime)
+
+
+core.register_globalstep(function(dtime)
     if not wind_enabled then
         return
     end -- skip if disabled
 
-    for _, player in ipairs(minetest.get_connected_players()) do
+    for _, player in ipairs(core.get_connected_players()) do
         local pos = player:get_pos()
 
         for i = 1, PARTICLES_PER_STEP do
@@ -178,9 +159,9 @@ minetest.register_globalstep(function(dtime)
             local w = wind.get_wind(p)
             local speed = vector.length(w) / 5
 
-            minetest.add_particle({
+            core.add_particle({
                 pos = p,
-                velocity = { x = w.x * 5, y = 0, z = w.z * 5 },
+                velocity = { x = w.x, y = 0, z = w.z },
                 acceleration = { x = 0, y = 0, z = 0 },
                 expirationtime = 5,
                 glow = 3,

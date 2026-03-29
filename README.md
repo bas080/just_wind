@@ -3,11 +3,10 @@
 A mod that will tell you what the wind is like at a position.
 
 ```lua
-local wind = dofile(core.get_modpath('breasy')..'/init.lua')
 
-wind.get_wind(pos)
+breasy.get_wind(pos)
 
-wind.register_biome('<biome_name>', {
+breasy.register_biome('<biome_name>', {
   -- Does a multiply
   factor = 0.5 -- cut the wind in half
 })
@@ -22,9 +21,8 @@ If adopted it can create a more consistent environment where all particles move 
 * Provides a **location-based wind system** with direction and speed.
 * Wind **slowly rotates** over time, completing configurable oscillations (e.g., ~2 switches per in‑game day).
 * **Perlin noise** introduces minor natural variation for both direction and speed.
-* **Biome influence**: modders can register biome-specific factors (`wind.register_biome`) to scale local wind speed.
+* **Biome influence**: modders can register biome-specific factors (`breasy.register_biome`) to scale local wind speed.
 * **Altitude attenuation**: wind weakens below sea level, gradually vanishing toward `MIN_Y`.
-* Offers a **Wind:add()** helper to apply wind force to objects.
 * Generates **client-side particles** around players to visualize wind flow.
 * Designed for **minimal recalculation**: noise objects are reused and speed/direction are stable per location.
 
@@ -32,31 +30,13 @@ This makes it easy for other mods to query wind vectors at any position and inte
 
 ## Usage
 
-### Apply wind to an object velocity
-
-```lua
-local current_vel = { x = 0, y = 0, z = 0 }  -- current velocity
-local factor = 2                             -- the amount it is affected by wind
-
--- get wind at position and apply to velocity
-local new_vel, wind_vec = wind.get_wind(pos):add(current_vel, factor)
-
-object:set_velocity(new_vel)
-```
-
 ### Using wind for particles
 
 ```lua
--- get wind vector
-local wind_vec = wind.get_wind(pos)
-
--- apply wind to particle velocity using :add()
-local base_vel = { x = 0, y = 0, z = 0 }
-local particle_vel, applied_wind = wind_vec:add(base_vel, 1)
-
 minetest.add_particle({
     pos = pos,
-    velocity = particle_vel,
+    velocity = breasy.get_wind(pos),
+    acc = gravity,
     expirationtime = 3,
     size = 0.1,
 })
@@ -65,10 +45,10 @@ minetest.add_particle({
 ### Read magnitude and direction
 
 ```lua
-local wind_vec = wind.get_wind(pos)
+local wind = breasy.get_wind(pos)
 
 -- magnitude/speed of wind
-local speed = vector.length(wind_vec)
+local speed = vector.length(wind)
 
 -- normalize to get pure direction
 vector.normalize(wind_vec)
