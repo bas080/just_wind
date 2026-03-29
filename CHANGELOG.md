@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0
+
+- Removed the add function since this is not a physics library.
+- Wind vector now represents meters per second.
+- Found and fixed the `nan` source.
+- Defined `breasy` global instead of doing dofile every time.
+
 ## 1.0.2
 
 - Fix bug where very small wind values would cause Infinity or NaN.
