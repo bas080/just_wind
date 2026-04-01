@@ -10,7 +10,7 @@ local almost_zero = 1e-4
 
 local biomes = dofile(modname .. "/biomes.lua")
 
-wind_particles_setting = setting_prefix .. "wind_particles"
+local wind_particles_setting = setting_prefix .. "wind_particles"
 
 local wind_enabled = core.settings:get_bool(wind_particles_setting, false)
 
