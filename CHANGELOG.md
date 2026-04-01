@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2
+
+- Fix accidental definition of a global.
+- Removed the mention of particles in features list.
+- Add a non documented and experimental get_occluded_wind function.
+
 ## 2.0.1
 
 - Likely fixed the wind vector nan source.
