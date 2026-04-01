@@ -91,6 +91,11 @@ local Wind = {}
 Wind.__index = Wind
 
 -- main API
+function wind.from_vector(vector)
+	setmetatable(vector, Wind)
+	return vector
+end
+
 function wind.get_wind(pos)
 	local x = math.round(pos.x) / SCALE
 	local z = math.round(pos.z) / SCALE
@@ -101,7 +106,7 @@ function wind.get_wind(pos)
 
 	-- no need to continue if the speed is very low.
 	if s <= almost_zero then
-		return vector.zero()
+		return wind.from_vector(vector.zero())
 	end
 
 	local speed = ((s + 1) * 0.5) ^ 1.4
@@ -124,9 +129,19 @@ function wind.get_wind(pos)
 
 	local velocity = vector.multiply(dir, speed)
 
-	setmetatable(velocity, Wind)
+	return wind.from_vector(velocity)
+end
 
-	return velocity
+-- Experimental: use at your own risk. Might be removed or changed at any time.
+function wind.get_occluded_wind(pos)
+	local raw = wind.get_wind(pos)
+
+	local is_clear = core.line_of_sight(pos, vector.subtract(pos, raw))
+	if is_clear then
+		return raw
+	else
+		return wind.from_vector(vector.zero())
+	end
 end
 
 local PLAYER_RADIUS = 20
@@ -163,15 +178,12 @@ core.register_globalstep(function(dtime)
 			}
 
 			local w = wind.get_wind(p)
-			local speed = vector.length(w) / 5
 
 			core.add_particle({
 				pos = p,
-				velocity = { x = w.x, y = 0, z = w.z },
-				acceleration = { x = 0, y = 0, z = 0 },
+				velocity = w,
 				expirationtime = 5,
 				glow = 3,
-				jitter = { x = speed, y = 0, z = speed },
 				texture = "default_cloud.png",
 				alpha = { 0.2, 0 },
 				size = 0.1,
