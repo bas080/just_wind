@@ -3,7 +3,6 @@
 A mod that will tell you what the wind is like at a position.
 
 ```lua
-
 breasy.get_wind(pos)
 
 breasy.register_biome('<biome_name>', {
@@ -23,7 +22,6 @@ If adopted it can create a more consistent environment where all particles move 
 * **Perlin noise** introduces minor natural variation for both direction and speed.
 * **Biome influence**: modders can register biome-specific factors (`breasy.register_biome`) to scale local wind speed.
 * **Altitude attenuation**: wind weakens below sea level, gradually vanishing toward `MIN_Y`.
-* Generates **client-side particles** around players to visualize wind flow.
 * Designed for **minimal recalculation**: noise objects are reused and speed/direction are stable per location.
 
 This makes it easy for other mods to query wind vectors at any position and integrate effects like particle motion, tree sway, or environmental interactions.
