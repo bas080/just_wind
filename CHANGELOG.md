@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+- Fix unintended cut-off to zero on slower wind speeds.
+
 ## 2.0.2
 
 - Fix accidental definition of a global.
