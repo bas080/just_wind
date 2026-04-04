@@ -104,12 +104,12 @@ function wind.get_wind(pos)
 	-- speed
 	local s = noise_speed:get_3d({ x = x, y = z, z = t })
 
+	local speed = ((s + 1) * 0.5) ^ 1.4
+
 	-- no need to continue if the speed is very low.
-	if s <= almost_zero then
+	if speed <= almost_zero then
 		return wind.from_vector(vector.zero())
 	end
-
-	local speed = ((s + 1) * 0.5) ^ 1.4
 
 	-- direction
 	local dx = noise_dir_x:get_3d({ x = x, y = z, z = t })
